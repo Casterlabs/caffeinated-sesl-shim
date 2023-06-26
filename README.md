@@ -27,10 +27,6 @@ This is for non-technical users of Casterlabs who wish to bring the custom code 
    Once you paste in the Fields you will see new a new "Settings" tab, in there you can select the code-specific settings (font size, colors, etc).
 5. Click the copy link button and add to OBS like normal. Et Voilà!
 
-#### The custom code keeps giving errors.
-
-This may be due to the code expecting the platform to always be Twitch or YouTube. In that case, you can enable "Forced compatibility mode" under the SESL tab. This will cause the code to always think that the event came from Twitch instead of another platform like Kick or TikTok.
-
 ### Carrier Mode
 
 When in Carrier mode, you package your code and give your client the resulting Jar. This will make your widgets appear as if they were native to Caffeinated. It is recommended that you try your best to update your Plugin as SESL evolves, as there may be new incompatibilities in the SDK that require an updated SESL Jar.

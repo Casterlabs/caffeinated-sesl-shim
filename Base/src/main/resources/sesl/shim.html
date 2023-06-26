@@ -43,7 +43,7 @@
             // Go through all of the fields and replace them.
             for (const [field, value] of Object.entries(allFields)) {
               if (
-                typeof key == "string" &&
+                typeof value == "string" &&
                 value.startsWith("{") &&
                 value.endsWith("}")
               ) {

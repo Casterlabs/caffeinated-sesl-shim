@@ -1,8 +1,5 @@
 // Chat events. (PRIVMSG)
 Koi.on("rich_message", (event) => {
-  const forcedCompatibilityMode =
-    Widget.getSetting("sesl.forced_compatibility") == "true";
-
   let message = "";
 
   for (const fragment of event.fragments) {
@@ -47,14 +44,12 @@ Koi.on("rich_message", (event) => {
       "user-type": "",
     },
     payload: {
-      raw: forcedCompatibilityMode ? "" : event, // Ick.
+      raw: event, // Ick.
     },
     owner: false,
     subscriber: false,
     userType: "",
-    platform: forcedCompatibilityMode
-      ? "twitch_account"
-      : `${event.sender.platform.toLowerCase()}_account`,
+    platform: `${event.sender.platform.toLowerCase()}_account`,
     platformAccountId: null,
     messageId: event.id,
     access_token: null,
@@ -78,7 +73,7 @@ Koi.on("rich_message", (event) => {
     // Go through all of the custom fields/settings and replace them.
     for (const [field, value] of Object.entries(allFields)) {
       if (
-        typeof key == "string" &&
+        typeof value == "string" &&
         value.startsWith("{") &&
         value.endsWith("}")
       ) {
