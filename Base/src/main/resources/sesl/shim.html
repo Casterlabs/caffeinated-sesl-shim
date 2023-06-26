@@ -33,11 +33,11 @@
         allFields.font_size += "px";
       });
 
+      Widget.on("new-settings", () => parent.location.reload());
+
       Widget.on(
         "custom-data",
         ({ shimType, customCSS, customJS, customHTML }) => {
-          // Widget.on("update", () => location.reload()); // Mimic Streamlabs behavior.
-
           // Make the custom CSS style.
           {
             // Go through all of the fields and replace them.
