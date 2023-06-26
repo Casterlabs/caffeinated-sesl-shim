@@ -9,9 +9,14 @@
  */
 package co.casterlabs.caffeinated.sesl.shim_mode;
 
+import java.io.IOException;
+
+import org.jetbrains.annotations.Nullable;
+
 import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPlugin;
 import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPluginImplementation;
 import co.casterlabs.caffeinated.sesl.SESL;
+import co.casterlabs.commons.functional.tuples.Pair;
 import lombok.NonNull;
 
 @CaffeinatedPluginImplementation
@@ -37,6 +42,11 @@ public class ShimPlugin extends CaffeinatedPlugin {
     @Override
     public @NonNull String getId() {
         return "co.castelrabs.caffeinated.sesl.shim_mode.plugin";
+    }
+
+    @Override
+    public @Nullable Pair<String, String> getResource(String resource) throws IOException {
+        return SESL.getResource(resource);
     }
 
 }

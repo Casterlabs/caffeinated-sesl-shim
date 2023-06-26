@@ -117,33 +117,14 @@ public class SESL {
         }
         layout.addSection(fieldsSection);
 
-        if (isShimMode()) {
-            layout.addSection(
-                new WidgetSettingsSection("sesl", "SESL")
-                    .addItem(WidgetSettingsItem.asTextArea("fields", "Fields / Settings", "{}", "{}"))
-                    .addItem(WidgetSettingsItem.asTextArea("custom_css", "Custom CSS", SESLExamples.customCSS, ""))
-                    .addItem(WidgetSettingsItem.asTextArea("custom_js", "Custom JS", SESLExamples.customJS, ""))
-                    .addItem(WidgetSettingsItem.asTextArea("custom_html", "Custom HTML", SESLExamples.customHTML, ""))
-            );
-        }
-
         return layout;
     }
 
-    public @Nullable Pair<String, String> getResource(@NonNull String resource) throws IOException {
+    public static @Nullable Pair<String, String> getResource(@NonNull String resource) throws IOException {
         if (isShimMode()) {
             resource = "sesl" + resource;
         } else {
             resource = seslId + resource;
-        }
-
-        // Append `index.html` to the end when required.
-        if (!resource.contains(".")) {
-            if (resource.endsWith("/")) {
-                resource += "index.html";
-            } else {
-                resource += ".html";
-            }
         }
 
         String mimeType = "application/octet-stream";

@@ -77,15 +77,19 @@ Koi.on("rich_message", (event) => {
 
     // Go through all of the custom fields/settings and replace them.
     for (const [field, value] of Object.entries(allFields)) {
-      if (value.startsWith("{") && value.endsWith("}")) {
+      if (
+        typeof key == "string" &&
+        value.startsWith("{") &&
+        value.endsWith("}")
+      ) {
         // Recurse.
-        chatlistItemTemplate = chatlistItemTemplate.replace(
-          new RegExp(`/\\{${field}\\}/g`),
+        chatlistItemTemplate = chatlistItemTemplate.replaceAll(
+          new RegExp(`\\{${field}\\}`, "g"),
           allFields[value.substring(1, value.length - 1)]
         );
       } else {
-        chatlistItemTemplate = chatlistItemTemplate.replace(
-          new RegExp(`/\\{${field}\\}/g`),
+        chatlistItemTemplate = chatlistItemTemplate.replaceAll(
+          new RegExp(`\\{${field}\\}`, "g"),
           value
         );
       }
@@ -93,18 +97,20 @@ Koi.on("rich_message", (event) => {
 
     // Go through all event fields and replace them.
     for (const [field, value] of Object.entries(streamlabsEvent)) {
-      chatlistItemTemplate = chatlistItemTemplate.replace(
-        new RegExp(`/\\{${field}\\}/g`),
+      chatlistItemTemplate = chatlistItemTemplate.replaceAll(
+        new RegExp(`\\{${field}\\}`, "g"),
         value
       );
     }
 
-    chatlistItemTemplate = chatlistItemTemplate.replace(
+    chatlistItemTemplate = chatlistItemTemplate.replaceAll(
       /\{message\}/g,
       message
     );
 
     const chatlistItemTemplate_el = document.createElement("div");
+    chatLayoutElement.appendChild(chatlistItemTemplate_el);
+
     chatlistItemTemplate_el.outerHTML = chatlistItemTemplate;
 
     // Inject the badges.
@@ -114,7 +120,5 @@ Koi.on("rich_message", (event) => {
         badgesList.innerHTML += `<img src="${badge}" class="badge">`; // TODO additional badge classes.
       }
     }
-
-    chatLayoutElement.innerHTML.appendChild(chatlistItemTemplate_el);
   }
 });

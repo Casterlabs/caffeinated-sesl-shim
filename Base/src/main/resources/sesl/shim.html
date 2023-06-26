@@ -12,12 +12,16 @@
         overflow: hidden;
       }
     </style>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+      integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script>
+      const allFields = {};
+
       Widget.on("init", () => {
-        // Widget.on("update", () => location.reload()); // Mimic Streamlabs behavior.
-
-        const allFields = {};
-
         for (const [key, value] of Object.entries(Widget.widgetData.settings)) {
           if (key.startsWith("settings.")) {
             allFields[key.substring("settings.".length)] = value;
@@ -27,58 +31,63 @@
         // Patch out some oddities in the fields.
         allFields.background_color = "transparent";
         allFields.font_size += "px";
-
-        Widget.on(
-          "custom-data",
-          ({ shimType, customCSS, customJS, customHTML }) => {
-            // Make the custom CSS style.
-            {
-              // Go through all of the fields and replace them.
-              for (const [field, value] of Object.entries(allFields)) {
-                if (value.startsWith("{") && value.endsWith("}")) {
-                  // Recurse.
-                  customCSS = customCSS.replace(
-                    new RegExp(`/\\{${field}\\}/g`),
-                    allFields[value.substring(1, value.length - 1)]
-                  );
-                } else {
-                  customCSS = customCSS.replace(
-                    new RegExp(`/\\{${field}\\}/g`),
-                    value
-                  );
-                }
-              }
-
-              const customCSS_el = document.createElement("style");
-              customCSS_el.appendChild(document.createTextNode(customCSS));
-              document.head.appendChild(customCSS_el);
-            }
-
-            // Make the custom JS script.
-            {
-              const customJS_el = document.createElement("script");
-              customJS_el.appendChild(document.createTextNode(customJS));
-              document.head.appendChild(customJS_el);
-            }
-
-            document.body.innerHTML = customHTML;
-
-            switch (shimType) {
-              default:
-              case "chatbox": {
-                const chatboxScript = document.createElement("script");
-                chatboxScript.src = "/$caffeinated-sdk-root$/chatbox.js";
-                document.head.appendChild(chatboxScript);
-                break;
-              }
-            }
-
-            // Okay, the code is ready. Emit!
-            document.dispatchEvent(new CustomEvent("onLoad"));
-          }
-        );
-        Widget.emit("want-custom-data");
       });
+
+      Widget.on(
+        "custom-data",
+        ({ shimType, customCSS, customJS, customHTML }) => {
+          // Widget.on("update", () => location.reload()); // Mimic Streamlabs behavior.
+
+          // Make the custom CSS style.
+          {
+            // Go through all of the fields and replace them.
+            for (const [field, value] of Object.entries(allFields)) {
+              if (
+                typeof key == "string" &&
+                value.startsWith("{") &&
+                value.endsWith("}")
+              ) {
+                // Recurse.
+                customCSS = customCSS.replaceAll(
+                  new RegExp(`\\{${field}\\}`, "g"),
+                  allFields[value.substring(1, value.length - 1)]
+                );
+              } else {
+                customCSS = customCSS.replaceAll(
+                  new RegExp(`\\{${field}\\}`, "g"),
+                  value
+                );
+              }
+            }
+
+            const customCSS_el = document.createElement("style");
+            customCSS_el.appendChild(document.createTextNode(customCSS));
+            document.head.appendChild(customCSS_el);
+          }
+
+          // Make the custom JS script.
+          {
+            const customJS_el = document.createElement("script");
+            customJS_el.appendChild(document.createTextNode(customJS));
+            document.head.appendChild(customJS_el);
+          }
+
+          document.body.innerHTML = customHTML;
+
+          switch (shimType) {
+            default:
+            case "chatbox": {
+              const chatboxScript = document.createElement("script");
+              chatboxScript.src = "/$caffeinated-sdk-root$/chatbox.js";
+              document.head.appendChild(chatboxScript);
+              break;
+            }
+          }
+
+          // Okay, the code is ready. Emit!
+          document.dispatchEvent(new CustomEvent("onLoad"));
+        }
+      );
     </script>
   </head>
   <body></body>

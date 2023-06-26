@@ -36,11 +36,9 @@ public abstract class SESLWidget extends Widget {
 
     @Override
     public void onNewInstance(@NonNull WidgetInstance instance) {
-        instance.on("want-custom-data", () -> {
-            try {
-                instance.emit("custom-data", SESL.generateCustomData(this));
-            } catch (IOException ignored) {}
-        });
+        try {
+            instance.emit("custom-data", SESL.generateCustomData(this));
+        } catch (IOException ignored) {}
     }
 
     @Override

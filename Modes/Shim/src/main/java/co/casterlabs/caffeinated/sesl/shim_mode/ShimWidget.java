@@ -11,6 +11,10 @@ package co.casterlabs.caffeinated.sesl.shim_mode;
 
 import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetDetails;
 import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetDetails.WidgetDetailsCategory;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsItem;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsSection;
+import co.casterlabs.caffeinated.sesl.SESL;
+import co.casterlabs.caffeinated.sesl.SESLExamples;
 import co.casterlabs.caffeinated.sesl.SESLWidget;
 import co.casterlabs.rakurai.json.Rson;
 import co.casterlabs.rakurai.json.element.JsonObject;
@@ -33,9 +37,23 @@ public class ShimWidget extends SESLWidget {
     }
 
     @Override
+    protected void onSettingsUpdate() {
+        this.setSettingsLayout(
+            SESL.generateLayout(this)
+                .addSection(
+                    new WidgetSettingsSection("sesl", "SESL")
+                        .addItem(WidgetSettingsItem.asTextArea("fields", "Fields / Settings", "{}", "{}", 8))
+                        .addItem(WidgetSettingsItem.asTextArea("custom_css", "Custom CSS", SESLExamples.customCSS, "", 8))
+                        .addItem(WidgetSettingsItem.asTextArea("custom_js", "Custom JS", SESLExamples.customJS, "", 8))
+                        .addItem(WidgetSettingsItem.asTextArea("custom_html", "Custom HTML", SESLExamples.customHTML, "", 8))
+                )
+        );
+    }
+
+    @Override
     @SneakyThrows
     public @NonNull JsonObject getFields() {
-        return Rson.DEFAULT.fromJson(this.settings().getString("sesl.custom_fields", "{}"), JsonObject.class);
+        return Rson.DEFAULT.fromJson(this.settings().getString("sesl.fields", "{}"), JsonObject.class);
     }
 
     @Override
