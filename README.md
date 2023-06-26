@@ -14,7 +14,7 @@ There are two modes of usage, [Carrier](#carrier-mode) and [Shim](#shim-mode)
 
 This is for non-technical users of Casterlabs who wish to bring the custom code that they paid for over to Casterlabs.
 
-1. Download the "Sesl-Shim.jar" from the [Latest Release](https://github.com/Casterlabs/caffeinated-sesl-shim/releases/latest).
+1. Download the "SESL-Shim.jar" from the [Latest Release](https://github.com/Casterlabs/caffeinated-sesl-shim/releases/latest).
 2. Place the downloaded Jar into your plugins folder, you can get there by opening Caffeinated, navigating to Settings > Plugins, and clicking the "Open plugins folder" button at the bottom.
 
 - The plugin will be automatically loaded every time you open Caffeinated.

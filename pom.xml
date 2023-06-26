@@ -57,7 +57,7 @@
 				</executions>
 				<configuration>
 					<shadedArtifactAttached>true</shadedArtifactAttached>
-					<finalName>${project.name}</finalName>
+					<finalName>SESL-${project.name}</finalName>
 				</configuration>
 			</plugin>
 		</plugins>
