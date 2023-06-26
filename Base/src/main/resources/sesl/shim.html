@@ -14,7 +14,7 @@
     </style>
     <script>
       Widget.on("init", () => {
-        Widget.on("update", () => location.reload()); // Mimic Streamlabs behavior.
+        // Widget.on("update", () => location.reload()); // Mimic Streamlabs behavior.
 
         const allFields = {};
 
@@ -23,6 +23,10 @@
             allFields[key.substring("settings.".length)] = value;
           }
         }
+
+        // Patch out some oddities in the fields.
+        allFields.background_color = "transparent";
+        allFields.font_size += "px";
 
         Widget.on(
           "custom-data",

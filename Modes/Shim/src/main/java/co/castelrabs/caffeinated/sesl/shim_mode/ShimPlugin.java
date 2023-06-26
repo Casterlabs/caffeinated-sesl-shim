@@ -7,45 +7,36 @@
  * 
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package co.casterlabs.caffeinated.sesl;
+package co.castelrabs.caffeinated.sesl.shim_mode;
 
-import java.io.IOException;
-
-import co.casterlabs.caffeinated.pluginsdk.widgets.Widget;
-import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetInstance;
-import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetInstanceMode;
-import co.casterlabs.rakurai.json.element.JsonObject;
+import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPlugin;
+import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPluginImplementation;
+import co.casterlabs.caffeinated.sesl.SESL;
 import lombok.NonNull;
 
-public abstract class SESLWidget extends Widget {
-
-    public abstract @NonNull String getShimType();
-
-    public abstract @NonNull JsonObject getFields();
-
-    public abstract @NonNull String getCustomCSS();
-
-    public abstract @NonNull String getCustomJS();
-
-    public abstract @NonNull String getCustomHTML();
+@CaffeinatedPluginImplementation
+public class ShimPlugin extends CaffeinatedPlugin {
 
     @Override
-    protected void onSettingsUpdate() {
-        this.setSettingsLayout(SESL.generateLayout(this));
+    public void onInit() {
+        if (!SESL.isShimMode()) {
+            this.getLogger().warn("SESL is not in shim mode yet the Shim plugin was loaded. I hope you know what you are doing...");
+        }
+
+        this.getPlugins().registerWidget(this, ShimWidget.DETAILS, ShimWidget.class);
     }
 
     @Override
-    public void onNewInstance(@NonNull WidgetInstance instance) {
-        instance.on("want-custom-data", () -> {
-            try {
-                instance.emit("custom-data", SESL.generateCustomData(this));
-            } catch (IOException ignored) {}
-        });
+    public void onClose() {}
+
+    @Override
+    public @NonNull String getName() {
+        return "SESL Shim";
     }
 
     @Override
-    public @NonNull String getWidgetBasePath(WidgetInstanceMode mode) {
-        return "/shim.html";
+    public @NonNull String getId() {
+        return "co.castelrabs.caffeinated.sesl.shim_mode.plugin";
     }
 
 }

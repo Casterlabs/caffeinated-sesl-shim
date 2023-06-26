@@ -43,6 +43,20 @@ public class SESL {
         WidgetSettingsLayout layout = new WidgetSettingsLayout();
 
         WidgetSettingsSection fieldsSection = new WidgetSettingsSection("settings", "Settings");
+
+        // Default Streamlabs fields.
+        switch (widget.getShimType()) {
+            case "chatbox": {
+                // We intentionally leave out background_color.
+                fieldsSection
+                    .addItem(WidgetSettingsItem.asColor("text_color", "Text Color", "#ffffff"))
+                    .addItem(WidgetSettingsItem.asNumber("font_size", "Font Size (px)", 18, 1, 0, 80));
+                // TODO the rest...
+                break;
+            }
+        }
+
+        // Convert the custom fields.
         for (Map.Entry<String, JsonElement> entry : widget.getFields().entrySet()) {
             String fieldId = entry.getKey();
             JsonObject fieldData = entry.getValue().getAsObject();
@@ -104,7 +118,13 @@ public class SESL {
         layout.addSection(fieldsSection);
 
         if (isShimMode()) {
-
+            layout.addSection(
+                new WidgetSettingsSection("sesl", "SESL")
+                    .addItem(WidgetSettingsItem.asTextArea("fields", "Fields / Settings", "{}", "{}"))
+                    .addItem(WidgetSettingsItem.asTextArea("custom_css", "Custom CSS", SESLExamples.customCSS, ""))
+                    .addItem(WidgetSettingsItem.asTextArea("custom_js", "Custom JS", SESLExamples.customJS, ""))
+                    .addItem(WidgetSettingsItem.asTextArea("custom_html", "Custom HTML", SESLExamples.customHTML, ""))
+            );
         }
 
         return layout;
@@ -114,7 +134,7 @@ public class SESL {
         if (isShimMode()) {
             resource = "sesl" + resource;
         } else {
-            resource = "sesl/" + seslId + resource;
+            resource = seslId + resource;
         }
 
         // Append `index.html` to the end when required.
