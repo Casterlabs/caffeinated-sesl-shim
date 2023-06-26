@@ -53,7 +53,7 @@ public class SESL {
             WidgetSettingsItem input;
             switch (se_fieldType) {
                 case "colorpicker": {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "";
+                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "#ea4c4c";
                     input = WidgetSettingsItem.asColor(fieldId, fieldName, defaultValue);
                     break;
                 }
@@ -67,6 +67,22 @@ public class SESL {
                 case "slider": {
                     double defaultValue = fieldData.containsKey("value") ? fieldData.getNumber("value").doubleValue() : 0;
                     input = WidgetSettingsItem.asRange(fieldId, fieldName, defaultValue, fieldData.getNumber("steps"), fieldData.getNumber("min"), fieldData.getNumber("max"));
+                    break;
+                }
+
+                case "fontpicker": {
+                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "Poppins";
+                    input = WidgetSettingsItem.asFont(fieldId, fieldName, defaultValue);
+                    break;
+                }
+
+                case "image-input": {
+                    input = WidgetSettingsItem.asFile(fieldId, fieldName, "image");
+                    break;
+                }
+
+                case "sound-input": {
+                    input = WidgetSettingsItem.asFile(fieldId, fieldName, "audio");
                     break;
                 }
 
