@@ -8,7 +8,7 @@ Streamlabs and StreamElements allow you to inject custom html into your chatbox,
 
 ## Usage
 
-There are two modes of usage, [Carrier](#Carrier%20Mode) and [Shim](#Shim%20Mode)
+There are two modes of usage, [Carrier](#carrier-mode) and [Shim](#shim-mode)
 
 ### Shim Mode
 
