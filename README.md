@@ -41,4 +41,4 @@ When in Carrier mode, you package your code and give your client the resulting J
 
 Development of SESL is the same as any other Caffeinated plugin. All you need is Maven, Java 11, and a good IDE (VSCode is fine).
 
-To build, just run `mvn install` in the root directory. The resulting jars will be in the `target` folder in `Carrier-Mode` and `Shim-Mode`.
+To build, just run `mvn install` in the root directory. The resulting jars will be in the `target` folder in `Modes/Carrier-Mode` and `Mode/Shim-Mode`.
