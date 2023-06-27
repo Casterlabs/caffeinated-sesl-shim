@@ -24,8 +24,8 @@ import lombok.SneakyThrows;
 public class ShimWidget extends SESLWidget {
 
     public static final WidgetDetails DETAILS = new WidgetDetails()
-        .withNamespace("co.castelrabs.caffeinated.sesl.shim_mode.widget")
-        .withIcon("puzzle-piece")
+        .withNamespace("co.casterlabs.caffeinated.sesl.shim_mode.widget")
+        .withIcon("code-bracket")
         .withCategory(WidgetDetailsCategory.OTHER)
         .withFriendlyName("SESL")
         .withShowDemo(true, 3 / 4d);

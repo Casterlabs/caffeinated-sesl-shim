@@ -41,7 +41,7 @@ public class ShimPlugin extends CaffeinatedPlugin {
 
     @Override
     public @NonNull String getId() {
-        return "co.castelrabs.caffeinated.sesl.shim_mode.plugin";
+        return "co.casterlabs.caffeinated.sesl.shim_mode.plugin";
     }
 
     @Override
