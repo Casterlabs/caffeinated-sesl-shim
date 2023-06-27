@@ -89,7 +89,7 @@
 			<groupId>co.casterlabs.Casterlabs</groupId>
 			<artifactId>PluginSDK</artifactId>
 			<!-- Only update this when necessary, it takes eons for Jitpack to build CL. poor guy :( -->
-			<version>5dc3e33</version>
+			<version>8383849e</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

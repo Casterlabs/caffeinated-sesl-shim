@@ -12,6 +12,7 @@ package co.casterlabs.caffeinated.sesl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
@@ -101,10 +102,14 @@ public class SESL {
                 }
 
                 // TODO SDK Updates...
-//                case "dropdown": {
-//                    input = WidgetSettingsItem.asDropdown(fieldId, fieldName, fieldName, null)
-//                    break;
-//                }
+                case "dropdown": {
+                    Map<String, String> optionsMap = new HashMap<>();
+                    for (Map.Entry<String, JsonElement> opt : fieldData.getObject("options")) {
+                        optionsMap.put(opt.getKey(), opt.getValue().getAsString());
+                    }
+                    input = WidgetSettingsItem.asDropdown(fieldId, fieldName, fieldName, optionsMap);
+                    break;
+                }
 
                 default: {
                     String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "";
