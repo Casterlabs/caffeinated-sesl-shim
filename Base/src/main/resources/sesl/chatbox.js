@@ -65,7 +65,7 @@ Koi.on("rich_message", (event) => {
   {
     let chatlistItemTemplate = document.querySelector(
       'script[type="text/template"]#chatlist_item'
-    ).innerText;
+    )?.innerText;
     const chatLayoutElement = document.querySelector("#log.sl__chat__layout");
 
     if (!chatlistItemTemplate || !chatLayoutElement) return;
