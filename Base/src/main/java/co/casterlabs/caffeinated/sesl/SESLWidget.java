@@ -23,6 +23,8 @@ public abstract class SESLWidget extends Widget {
 
     public abstract @NonNull JsonObject getFields();
 
+    public abstract @NonNull JsonObject getDataDefaults();
+
     public abstract @NonNull String getCustomCSS();
 
     public abstract @NonNull String getCustomJS();

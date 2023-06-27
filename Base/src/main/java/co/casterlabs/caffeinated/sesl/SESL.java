@@ -58,6 +58,7 @@ public class SESL {
         }
 
         // Convert the custom fields.
+        JsonObject defaultsData = widget.getDataDefaults();
         for (Map.Entry<String, JsonElement> entry : widget.getFields().entrySet()) {
             String fieldId = entry.getKey();
             JsonObject fieldData = entry.getValue().getAsObject();
@@ -68,7 +69,7 @@ public class SESL {
             WidgetSettingsItem input;
             switch (se_fieldType) {
                 case "colorpicker": {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "#ea4c4c";
+                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "#ea4c4c";
                     input = WidgetSettingsItem.asColor(fieldId, fieldName, defaultValue);
                     break;
                 }
@@ -80,13 +81,13 @@ public class SESL {
                 }
 
                 case "slider": {
-                    double defaultValue = fieldData.containsKey("value") ? fieldData.getNumber("value").doubleValue() : 0;
+                    double defaultValue = fieldData.containsKey("value") ? fieldData.getNumber("value").doubleValue() : fieldData.containsKey(fieldId) ? fieldData.getNumber(fieldId).doubleValue() : 0;
                     input = WidgetSettingsItem.asRange(fieldId, fieldName, defaultValue, fieldData.getNumber("steps"), fieldData.getNumber("min"), fieldData.getNumber("max"));
                     break;
                 }
 
                 case "fontpicker": {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "Poppins";
+                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "Poppins";
                     input = WidgetSettingsItem.asFont(fieldId, fieldName, defaultValue);
                     break;
                 }
@@ -103,16 +104,18 @@ public class SESL {
 
                 // TODO SDK Updates...
                 case "dropdown": {
+                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "";
                     Map<String, String> optionsMap = new HashMap<>();
                     for (Map.Entry<String, JsonElement> opt : fieldData.getObject("options")) {
                         optionsMap.put(opt.getKey(), opt.getValue().getAsString());
                     }
-                    input = WidgetSettingsItem.asDropdown(fieldId, fieldName, fieldName, optionsMap);
+
+                    input = WidgetSettingsItem.asDropdown(fieldId, fieldName, defaultValue, optionsMap);
                     break;
                 }
 
                 default: {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "";
+                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "";
                     input = WidgetSettingsItem.asText(fieldId, fieldName, defaultValue, "Unknown type: " + se_fieldType);
                     break;
                 }

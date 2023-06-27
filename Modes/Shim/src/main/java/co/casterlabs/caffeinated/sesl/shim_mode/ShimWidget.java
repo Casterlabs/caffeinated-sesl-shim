@@ -45,6 +45,7 @@ public class ShimWidget extends SESLWidget {
                 .addSection(
                     new WidgetSettingsSection("sesl", "SESL")
                         .addItem(WidgetSettingsItem.asCode("fields", "Fields / Settings", "{}", "json"))
+                        .addItem(WidgetSettingsItem.asCode("data", "Data / Defaults", "{}", "json"))
                         .addItem(WidgetSettingsItem.asCode("custom_css", "Custom CSS", SESLExamples.customCSS, "css"))
                         .addItem(WidgetSettingsItem.asCode("custom_js", "Custom JS", SESLExamples.customJS, "js"))
                         .addItem(WidgetSettingsItem.asCode("custom_html", "Custom HTML", SESLExamples.customHTML, "html"))
@@ -56,6 +57,12 @@ public class ShimWidget extends SESLWidget {
     @SneakyThrows
     public @NonNull JsonObject getFields() {
         return Rson.DEFAULT.fromJson(this.settings().getString("sesl.fields", "{}"), JsonObject.class);
+    }
+
+    @Override
+    @SneakyThrows
+    public @NonNull JsonObject getDataDefaults() {
+        return Rson.DEFAULT.fromJson(this.settings().getString("sesl.data", "{}"), JsonObject.class);
     }
 
     @Override
