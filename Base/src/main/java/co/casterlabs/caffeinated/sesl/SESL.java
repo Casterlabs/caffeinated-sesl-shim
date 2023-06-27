@@ -41,91 +41,115 @@ public class SESL {
     }
 
     public static WidgetSettingsLayout generateLayout(SESLWidget widget) {
-        WidgetSettingsLayout layout = new WidgetSettingsLayout();
+        try {
+            WidgetSettingsLayout layout = new WidgetSettingsLayout();
 
-        WidgetSettingsSection fieldsSection = new WidgetSettingsSection("settings", "Settings");
+            WidgetSettingsSection fieldsSection = new WidgetSettingsSection("settings", "Settings");
 
-        // Default Streamlabs fields.
-        switch (widget.getShimType()) {
-            case "chatbox": {
-                // We intentionally leave out background_color.
-                fieldsSection
-                    .addItem(WidgetSettingsItem.asColor("text_color", "Text Color", "#ffffff"))
-                    .addItem(WidgetSettingsItem.asNumber("font_size", "Font Size (px)", 18, 1, 0, 80));
-                // TODO the rest...
-                break;
+            // Default Streamlabs fields.
+            switch (widget.getShimType()) {
+                case "chatbox": {
+                    // We intentionally leave out background_color.
+                    fieldsSection
+                        .addItem(WidgetSettingsItem.asColor("text_color", "Text Color", "#ffffff"))
+                        .addItem(WidgetSettingsItem.asNumber("font_size", "Font Size (px)", 18, 1, 0, 80));
+                    // TODO the rest...
+                    break;
+                }
             }
-        }
 
-        // Convert the custom fields.
-        JsonObject defaultsData = widget.getDataDefaults();
-        for (Map.Entry<String, JsonElement> entry : widget.getFields().entrySet()) {
-            String fieldId = entry.getKey();
-            JsonObject fieldData = entry.getValue().getAsObject();
+            // Convert the custom fields.
+            JsonObject defaultsData = widget.getDataDefaults();
+            for (Map.Entry<String, JsonElement> entry : widget.getFields().entrySet()) {
+                String fieldId = entry.getKey();
+                JsonObject fieldData = entry.getValue().getAsObject();
 
-            String se_fieldType = fieldData.getString("type");
-            String fieldName = fieldData.getString("label");
+                String se_fieldType = fieldData.getString("type");
+                String fieldName = fieldData.getString("label");
 
-            WidgetSettingsItem input;
-            switch (se_fieldType) {
-                case "colorpicker": {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "#ea4c4c";
-                    input = WidgetSettingsItem.asColor(fieldId, fieldName, defaultValue);
-                    break;
-                }
-
-                case "textfield": {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : "";
-                    input = WidgetSettingsItem.asText(fieldId, fieldName, defaultValue, "");
-                    break;
-                }
-
-                case "slider": {
-                    double defaultValue = fieldData.containsKey("value") ? fieldData.getNumber("value").doubleValue() : fieldData.containsKey(fieldId) ? fieldData.getNumber(fieldId).doubleValue() : 0;
-                    input = WidgetSettingsItem.asRange(fieldId, fieldName, defaultValue, fieldData.getNumber("steps"), fieldData.getNumber("min"), fieldData.getNumber("max"));
-                    break;
-                }
-
-                case "fontpicker": {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "Poppins";
-                    input = WidgetSettingsItem.asFont(fieldId, fieldName, defaultValue);
-                    break;
-                }
-
-                case "image-input": {
-                    input = WidgetSettingsItem.asFile(fieldId, fieldName, "image");
-                    break;
-                }
-
-                case "sound-input": {
-                    input = WidgetSettingsItem.asFile(fieldId, fieldName, "audio");
-                    break;
-                }
-
-                // TODO SDK Updates...
-                case "dropdown": {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "";
-                    Map<String, String> optionsMap = new HashMap<>();
-                    for (Map.Entry<String, JsonElement> opt : fieldData.getObject("options")) {
-                        optionsMap.put(opt.getKey(), opt.getValue().getAsString());
+                WidgetSettingsItem input;
+                switch (se_fieldType) {
+                    case "colorpicker": {
+                        String defaultValue = //
+                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
+                                fieldData.containsKey("value") ? fieldData.getString("value") : //
+                                    "#ea4c4c";
+                        input = WidgetSettingsItem.asColor(fieldId, fieldName, defaultValue);
+                        break;
                     }
 
-                    input = WidgetSettingsItem.asDropdown(fieldId, fieldName, defaultValue, optionsMap);
-                    break;
+                    case "textfield": {
+                        String defaultValue = //
+                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
+                                fieldData.containsKey("value") ? fieldData.getString("value") : //
+                                    "";
+                        input = WidgetSettingsItem.asText(fieldId, fieldName, defaultValue, "");
+                        break;
+                    }
+
+                    case "slider": {
+                        Number defaultValue = //
+                            defaultsData.containsKey(fieldId) ? defaultsData.getNumber(fieldId) : //
+                                fieldData.containsKey("value") ? fieldData.getNumber("value") : //
+                                    0;
+                        Number steps = fieldData.getNumber("step");
+                        Number min = fieldData.getNumber("min");
+                        Number max = fieldData.getNumber("max");
+
+                        input = WidgetSettingsItem.asRange(fieldId, fieldName, defaultValue, steps, min, max);
+                        break;
+                    }
+
+                    case "fontpicker": {
+                        String defaultValue = //
+                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
+                                fieldData.containsKey("value") ? fieldData.getString("value") : //
+                                    "Poppins";
+                        input = WidgetSettingsItem.asFont(fieldId, fieldName, defaultValue);
+                        break;
+                    }
+
+                    case "image-input": {
+                        input = WidgetSettingsItem.asFile(fieldId, fieldName, "image");
+                        break;
+                    }
+
+                    case "sound-input": {
+                        input = WidgetSettingsItem.asFile(fieldId, fieldName, "audio");
+                        break;
+                    }
+
+                    case "dropdown": {
+                        String defaultValue = //
+                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
+                                fieldData.containsKey("value") ? fieldData.getString("value") : //
+                                    "";
+
+                        Map<String, String> optionsMap = new HashMap<>();
+                        for (Map.Entry<String, JsonElement> opt : fieldData.getObject("options")) {
+                            optionsMap.put(opt.getKey(), opt.getValue().getAsString());
+                        }
+
+                        input = WidgetSettingsItem.asDropdown(fieldId, fieldName, defaultValue, optionsMap);
+                        break;
+                    }
+
+                    default: {
+                        String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : "";
+                        input = WidgetSettingsItem.asText(fieldId, fieldName, defaultValue, "Unknown type: " + se_fieldType);
+                        break;
+                    }
                 }
 
-                default: {
-                    String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : fieldData.containsKey(fieldId) ? fieldData.getString(fieldId) : "";
-                    input = WidgetSettingsItem.asText(fieldId, fieldName, defaultValue, "Unknown type: " + se_fieldType);
-                    break;
-                }
+                fieldsSection.addItem(input);
             }
+            layout.addSection(fieldsSection);
 
-            fieldsSection.addItem(input);
+            return layout;
+        } catch (Throwable t) {
+            LOGGER.fatal("An error occurred whilst building layout:\n%s", t);
+            return new WidgetSettingsLayout(); // Empty.
         }
-        layout.addSection(fieldsSection);
-
-        return layout;
     }
 
     public static @Nullable Pair<String, String> getResource(@NonNull String resource) throws IOException {
