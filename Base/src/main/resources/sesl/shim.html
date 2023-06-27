@@ -86,6 +86,7 @@
 
           // Okay, the code is ready. Emit!
           document.dispatchEvent(new CustomEvent("onLoad"));
+          window.dispatchEvent(new CustomEvent("onLoad"));
         }
       );
     </script>

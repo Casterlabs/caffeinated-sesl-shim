@@ -60,6 +60,9 @@ Koi.on("rich_message", (event) => {
   document.dispatchEvent(
     new CustomEvent("onEventReceived", { detail: streamlabsEvent })
   );
+  window.dispatchEvent(
+    new CustomEvent("onEventReceived", { detail: streamlabsEvent })
+  );
 
   // Do the chatlist_item behavior that Streamlabs implements.
   {
