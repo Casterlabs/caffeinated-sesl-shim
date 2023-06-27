@@ -44,10 +44,10 @@ public class ShimWidget extends SESLWidget {
             SESL.generateLayout(this)
                 .addSection(
                     new WidgetSettingsSection("sesl", "SESL")
-                        .addItem(WidgetSettingsItem.asTextArea("fields", "Fields / Settings", "{}", "{}", 8))
-                        .addItem(WidgetSettingsItem.asTextArea("custom_css", "Custom CSS", SESLExamples.customCSS, "", 8))
-                        .addItem(WidgetSettingsItem.asTextArea("custom_js", "Custom JS", SESLExamples.customJS, "", 8))
-                        .addItem(WidgetSettingsItem.asTextArea("custom_html", "Custom HTML", SESLExamples.customHTML, "", 8))
+                        .addItem(WidgetSettingsItem.asCode("fields", "Fields / Settings", "{}", "json"))
+                        .addItem(WidgetSettingsItem.asCode("custom_css", "Custom CSS", SESLExamples.customCSS, "css"))
+                        .addItem(WidgetSettingsItem.asCode("custom_js", "Custom JS", SESLExamples.customJS, "js"))
+                        .addItem(WidgetSettingsItem.asCode("custom_html", "Custom HTML", SESLExamples.customHTML, "html"))
                 )
         );
     }
