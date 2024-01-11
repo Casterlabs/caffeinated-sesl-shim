@@ -1,0 +1,13 @@
+{
+	"id": "com.example.caffeinated_sesl_carrier",
+	"name": "Example SESL Carrier",
+	"widgets": [
+		{
+			"type": "chatbox",
+			"id": "my_chatbox",
+			"name": "My Chatbox",
+			"category": "OTHER",
+			"icon": "star"
+		}
+	]
+}

@@ -52,15 +52,6 @@ import xyz.e3ndr.fastloggingframework.logging.FastLogger;
 public class SESL {
     public static final FastLogger LOGGER = new FastLogger();
 
-    /**
-     * The unique ID for Carrier mode. Always null for shim mode.
-     */
-    public static String seslId = null;
-
-    public static boolean isShimMode() {
-        return seslId == null;
-    }
-
     @SuppressWarnings("deprecation")
     public static WidgetSettingsLayout generateLayout(SESLWidget widget) {
         try {
@@ -264,11 +255,7 @@ public class SESL {
     }
 
     public static @Nullable Pair<String, String> getResource(@NonNull String resource) throws IOException {
-        if (isShimMode()) {
-            resource = "sesl" + resource;
-        } else {
-            resource = seslId + resource;
-        }
+        resource = "sesl" + resource;
 
         String mimeType = "application/octet-stream";
 

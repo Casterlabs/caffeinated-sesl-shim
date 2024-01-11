@@ -21,25 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package co.casterlabs.caffeinated.sesl.shim_mode;
+package co.casterlabs.caffeinated.sesl.carrier_mode;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.jetbrains.annotations.Nullable;
 
 import co.casterlabs.caffeinated.pluginsdk.Caffeinated;
 import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPlugin;
 import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPluginImplementation;
+import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetDetails;
 import co.casterlabs.caffeinated.sesl.SESL;
+import co.casterlabs.caffeinated.sesl.carrier_mode.CarrierConfig.ConfigWidget;
 import co.casterlabs.commons.functional.tuples.Pair;
+import co.casterlabs.commons.io.streams.StreamUtil;
+import co.casterlabs.rakurai.json.Rson;
 import lombok.NonNull;
 
 @CaffeinatedPluginImplementation
-public class ShimPlugin extends CaffeinatedPlugin {
+public class CarrierPlugin extends CaffeinatedPlugin {
+    public static CarrierConfig config;
+    static {
+        try {
+            String raw = StreamUtil.toString(CarrierPlugin.class.getResourceAsStream("/sesl/carrier.json"), StandardCharsets.UTF_8);
+            config = Rson.DEFAULT.fromJson(raw, CarrierConfig.class);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
 
     @Override
     public void onInit() {
-        Caffeinated.getInstance().getPlugins().registerWidget(this, ShimWidget.DETAILS, ShimWidget.class);
+        for (ConfigWidget w : config.widgets) {
+            WidgetDetails details = new WidgetDetails()
+                .withNamespace(config.id + "." + w.id)
+                .withIcon(w.icon)
+                .withCategory(w.category)
+                .withFriendlyName(w.name)
+                .withShowDemo(true, 3 / 4d);
+
+            Caffeinated.getInstance().getPlugins().registerWidgetFactory(
+                this,
+                details,
+                (_unused) -> {
+                    return new CarrierWidget(w);
+                }
+            );
+        }
     }
 
     @Override
@@ -47,12 +76,12 @@ public class ShimPlugin extends CaffeinatedPlugin {
 
     @Override
     public @NonNull String getName() {
-        return "SESL Shim";
+        return config.name;
     }
 
     @Override
     public @NonNull String getId() {
-        return "co.casterlabs.caffeinated.sesl.shim_mode.plugin";
+        return config.id;
     }
 
     @Override

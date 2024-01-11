@@ -21,43 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package co.casterlabs.caffeinated.sesl.shim_mode;
+package co.casterlabs.caffeinated.sesl.carrier_mode;
 
-import java.io.IOException;
+import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetDetails.WidgetDetailsCategory;
+import co.casterlabs.rakurai.json.annotating.JsonClass;
 
-import org.jetbrains.annotations.Nullable;
+@JsonClass(exposeAll = true)
+public class CarrierConfig {
+    public String id;
+    public String name;
 
-import co.casterlabs.caffeinated.pluginsdk.Caffeinated;
-import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPlugin;
-import co.casterlabs.caffeinated.pluginsdk.CaffeinatedPluginImplementation;
-import co.casterlabs.caffeinated.sesl.SESL;
-import co.casterlabs.commons.functional.tuples.Pair;
-import lombok.NonNull;
+    public ConfigWidget[] widgets;
 
-@CaffeinatedPluginImplementation
-public class ShimPlugin extends CaffeinatedPlugin {
-
-    @Override
-    public void onInit() {
-        Caffeinated.getInstance().getPlugins().registerWidget(this, ShimWidget.DETAILS, ShimWidget.class);
-    }
-
-    @Override
-    public void onClose() {}
-
-    @Override
-    public @NonNull String getName() {
-        return "SESL Shim";
-    }
-
-    @Override
-    public @NonNull String getId() {
-        return "co.casterlabs.caffeinated.sesl.shim_mode.plugin";
-    }
-
-    @Override
-    public @Nullable Pair<String, String> getResource(String resource) throws IOException {
-        return SESL.getResource(resource);
+    @JsonClass(exposeAll = true)
+    public static class ConfigWidget {
+        public String type;
+        public String id;
+        public String name;
+        public WidgetDetailsCategory category;
+        public String icon;
     }
 
 }
