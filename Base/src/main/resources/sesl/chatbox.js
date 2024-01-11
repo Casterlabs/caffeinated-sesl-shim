@@ -92,6 +92,12 @@ Koi.on("rich_message", (event) => {
         value
       );
     }
+    for (const [field, value] of Object.entries(streamlabsEvent.tags)) {
+      chatlistItemTemplate = chatlistItemTemplate.replaceAll(
+        new RegExp(`\\{${field}\\}`, "g"),
+        value
+      );
+    }
 
     chatlistItemTemplate = chatlistItemTemplate.replaceAll(
       /\{message\}/g,
