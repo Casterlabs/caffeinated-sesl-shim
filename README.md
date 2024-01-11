@@ -31,7 +31,17 @@ This is for non-technical users of Casterlabs who wish to bring the custom code 
 
 When in Carrier mode, you package your code and give your client the resulting Jar. This will make your widgets appear as if they were native to Caffeinated. It is recommended that you try your best to update your Plugin as SESL evolves, as there may be new incompatibilities in the SDK that require an updated SESL Jar.
 
-// TODO Carrier instructions, give Nathan a high-five.
+1. Download the "SESL-Carrier.jar" from the [Latest Release](https://github.com/Casterlabs/caffeinated-sesl-shim/releases/latest).
+2. Open the .jar in a Zip program, 7Zip works great for this.
+3. Edit `sesl/carrier.json`, this is where you specify your unique ID, the plugin name, and the widgets to include.
+
+- We've included some defaults to get you going.
+- You can use (almost) any icon from https://heroicons.com as your Widget icon.
+- For the category, reference [this file](https://github.com/Casterlabs/caffeinated/blob/dev/app/PluginSDK/src/main/java/co/casterlabs/caffeinated/pluginsdk/widgets/WidgetDetails.java#L83).
+
+4. For every widget, you'll need your custom code. Use `my_chatbox` as a reference on how to structure your code.
+5. Delete the existing files in the .jar and replace them with the modified ones you made in steps 3-4.
+6. Rename the final .jar file and distribute it to your users!
 
 ## Development
 
