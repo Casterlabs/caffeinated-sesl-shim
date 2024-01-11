@@ -121,8 +121,29 @@
 
           // Make the custom JS script.
           {
+            // Go through all of the fields and replace them.
+            let script = customJS;
+            for (const [field, value] of Object.entries(allFields)) {
+              if (
+                typeof value == "string" &&
+                value.startsWith("{") &&
+                value.endsWith("}")
+              ) {
+                // Recurse.
+                script = script.replaceAll(
+                  new RegExp(`\\{${field}\\}`, "g"),
+                  allFields[value.substring(1, value.length - 1)]
+                );
+              } else {
+                script = script.replaceAll(
+                  new RegExp(`\\{${field}\\}`, "g"),
+                  value
+                );
+              }
+            }
+
             const customJS_el = document.createElement("script");
-            customJS_el.appendChild(document.createTextNode(customJS));
+            customJS_el.appendChild(document.createTextNode(script));
             document.head.appendChild(customJS_el);
           }
 
