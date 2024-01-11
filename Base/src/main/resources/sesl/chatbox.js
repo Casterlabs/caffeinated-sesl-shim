@@ -99,17 +99,20 @@ Koi.on("rich_message", (event) => {
     );
 
     const chatlistItemTemplate_el = document.createElement("div");
-    chatLayoutElement.appendChild(chatlistItemTemplate_el);
 
-    chatlistItemTemplate_el.outerHTML = chatlistItemTemplate;
+    chatlistItemTemplate_el.innerHTML = chatlistItemTemplate;
+
 
     // Inject the badges.
     const badgesList = chatlistItemTemplate_el.querySelector(".badges");
     if (badgesList) {
       for (const badge of event.sender.badges) {
-        badgesList.innerHTML += `<img src="${badge}" class="badge">`; // TODO additional badge classes.
+        badgesList.innerHTML += `<img src="${badge}" class="badge" />`; // TODO additional badge classes.
       }
     }
+
+    chatLayoutElement.appendChild(chatlistItemTemplate_el);
+    chatlistItemTemplate_el.outerHTML = chatlistItemTemplate_el.innerHTML;
   })();
 
   // Shim out the event for any JS listeners.
