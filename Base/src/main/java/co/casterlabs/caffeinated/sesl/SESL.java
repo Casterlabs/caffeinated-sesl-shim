@@ -219,6 +219,11 @@ public class SESL {
                             .withDefaultValue(defaultValue)
                             .withOptions(optionsMap)
                             .build();
+
+                        // Caffeinated fix
+                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue != null) {
+                            widget.settings().set(group + "." + fieldId, defaultValue);
+                        }
                         break;
                     }
 
