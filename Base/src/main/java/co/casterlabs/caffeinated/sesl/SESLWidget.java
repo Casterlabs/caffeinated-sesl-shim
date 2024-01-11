@@ -25,9 +25,14 @@ package co.casterlabs.caffeinated.sesl;
 
 import java.io.IOException;
 
+import org.jetbrains.annotations.Nullable;
+
 import co.casterlabs.caffeinated.pluginsdk.widgets.Widget;
 import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetInstance;
 import co.casterlabs.caffeinated.pluginsdk.widgets.WidgetInstanceMode;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsSection;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsColorBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsNumberBuilder;
 import co.casterlabs.rakurai.json.element.JsonObject;
 import lombok.NonNull;
 
@@ -44,6 +49,37 @@ public abstract class SESLWidget extends Widget {
     public abstract @NonNull String getCustomJS();
 
     public abstract @NonNull String getCustomHTML();
+
+    @SuppressWarnings("deprecation")
+    public @Nullable WidgetSettingsSection getDefaultFields() {
+        // Default Streamlabs fields.
+        switch (this.getShimType()) {
+            case "chatbox":
+                // We intentionally leave out background_color.
+                return new WidgetSettingsSection("settings", "Settings")
+                    .addItem(
+                        new WidgetSettingsColorBuilder()
+                            .withId("text_color")
+                            .withName("Text Color")
+                            .withDefaultValue("#ffffff")
+                            .build()
+                    )
+                    .addItem(
+                        new WidgetSettingsNumberBuilder()
+                            .withId("font_size")
+                            .withName("Font Size (px)")
+                            .withStep(1)
+                            .withMin(0)
+                            .withMax(80)
+                            .withDefaultValue(18)
+                            .build()
+                    );
+
+            // TODO the rest...
+            default:
+                return null;
+        }
+    }
 
     @Override
     protected void onSettingsUpdate() {

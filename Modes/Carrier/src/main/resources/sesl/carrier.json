@@ -7,7 +7,8 @@
 			"id": "my_chatbox",
 			"name": "My Chatbox",
 			"category": "OTHER",
-			"icon": "star"
+			"icon": "star",
+			"addDefaultFields": true
 		}
 	]
 }

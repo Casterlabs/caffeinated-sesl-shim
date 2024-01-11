@@ -40,6 +40,7 @@ public class CarrierConfig {
         public String name;
         public WidgetDetailsCategory category;
         public String icon;
+        public boolean addDefaultFields;
     }
 
 }

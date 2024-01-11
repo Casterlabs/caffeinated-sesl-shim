@@ -38,7 +38,6 @@ import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettings
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsDropdownBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsFileBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsFontBuilder;
-import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsNumberBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsRangeBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsTextBuilder;
 import co.casterlabs.caffeinated.util.MimeTypes;
@@ -55,36 +54,11 @@ public class SESL {
     @SuppressWarnings("deprecation")
     public static WidgetSettingsLayout generateLayout(SESLWidget widget) {
         try {
-            WidgetSettingsLayout layout = new WidgetSettingsLayout();
-
             Map<String, WidgetSettingsSection> sections = new HashMap<>();
-            sections.put("settings", new WidgetSettingsSection("settings", "Settings"));
 
-            // Default Streamlabs fields.
-            switch (widget.getShimType()) {
-                case "chatbox": {
-                    // We intentionally leave out background_color.
-                    sections.get("settings")
-                        .addItem(
-                            new WidgetSettingsColorBuilder()
-                                .withId("text_color")
-                                .withName("Text Color")
-                                .withDefaultValue("#ffffff")
-                                .build()
-                        )
-                        .addItem(
-                            new WidgetSettingsNumberBuilder()
-                                .withId("font_size")
-                                .withName("Font Size (px)")
-                                .withStep(1)
-                                .withMin(0)
-                                .withMax(80)
-                                .withDefaultValue(18)
-                                .build()
-                        );
-                    // TODO the rest...
-                    break;
-                }
+            WidgetSettingsSection defaultSection = widget.getDefaultFields();
+            if (defaultSection != null) {
+                sections.put(defaultSection.getId(), defaultSection);
             }
 
             // Convert the custom fields.
@@ -243,10 +217,10 @@ public class SESL {
                 section.addItem(input);
             }
 
+            WidgetSettingsLayout layout = new WidgetSettingsLayout();
             for (WidgetSettingsSection section : sections.values()) {
                 layout.addSection(section);
             }
-
             return layout;
         } catch (Throwable t) {
             LOGGER.fatal("An error occurred whilst building layout:\n%s", t);

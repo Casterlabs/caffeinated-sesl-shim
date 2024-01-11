@@ -25,6 +25,9 @@ package co.casterlabs.caffeinated.sesl.carrier_mode;
 
 import java.nio.charset.StandardCharsets;
 
+import org.jetbrains.annotations.Nullable;
+
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsSection;
 import co.casterlabs.caffeinated.sesl.SESL;
 import co.casterlabs.caffeinated.sesl.SESLWidget;
 import co.casterlabs.caffeinated.sesl.carrier_mode.CarrierConfig.ConfigWidget;
@@ -54,6 +57,15 @@ public class CarrierWidget extends SESLWidget {
         this.customCSS = StreamUtil.toString(CarrierPlugin.class.getResourceAsStream("/sesl/" + config.id + "/custom.css"), StandardCharsets.UTF_8);
         this.customJS = StreamUtil.toString(CarrierPlugin.class.getResourceAsStream("/sesl/" + config.id + "/custom.js"), StandardCharsets.UTF_8);
         this.customHTML = StreamUtil.toString(CarrierPlugin.class.getResourceAsStream("/sesl/" + config.id + "/custom.html"), StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public @Nullable WidgetSettingsSection getDefaultFields() {
+        if (this.config.addDefaultFields) {
+            return super.getDefaultFields();
+        } else {
+            return null;
+        }
     }
 
     @Override
