@@ -210,7 +210,14 @@ public class SESL {
 
                         Map<String, String> optionsMap = new HashMap<>();
                         for (Map.Entry<String, JsonElement> opt : fieldData.getObject("options")) {
-                            optionsMap.put(opt.getKey(), opt.getValue().getAsString());
+                            String key = opt.getKey();
+                            String value = opt.getValue().getAsString();
+
+                            if (defaultValue.equals(value)) {
+                                defaultValue = key; // Strange...
+                            }
+
+                            optionsMap.put(key, value);
                         }
 
                         input = new WidgetSettingsDropdownBuilder()
@@ -219,11 +226,6 @@ public class SESL {
                             .withDefaultValue(defaultValue)
                             .withOptions(optionsMap)
                             .build();
-
-                        // Caffeinated fix
-                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue != null) {
-                            widget.settings().set(group + "." + fieldId, defaultValue);
-                        }
                         break;
                     }
 
