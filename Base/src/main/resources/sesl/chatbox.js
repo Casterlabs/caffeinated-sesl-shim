@@ -56,16 +56,8 @@ Koi.on("rich_message", (event) => {
     to: `#${event.streamer.username}`,
   };
 
-  // Shim out the event for any JS listeners.
-  document.dispatchEvent(
-    new CustomEvent("onEventReceived", { detail: streamlabsEvent })
-  );
-  window.dispatchEvent(
-    new CustomEvent("onEventReceived", { detail: streamlabsEvent })
-  );
-
   // Do the chatlist_item behavior that Streamlabs implements.
-  {
+  (() => {
     let chatlistItemTemplate = document.querySelector(
       'script[type="text/template"]#chatlist_item'
     )?.innerText;
@@ -118,5 +110,14 @@ Koi.on("rich_message", (event) => {
         badgesList.innerHTML += `<img src="${badge}" class="badge">`; // TODO additional badge classes.
       }
     }
-  }
+  })();
+
+  // Shim out the event for any JS listeners.
+  document.dispatchEvent(
+    new CustomEvent("onEventReceived", { detail: streamlabsEvent })
+  );
+  window.dispatchEvent(
+    new CustomEvent("onEventReceived", { detail: streamlabsEvent })
+  );
+
 });
