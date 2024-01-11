@@ -63,6 +63,7 @@ public class CarrierWidget extends SESLWidget {
 
     @Override
     protected void onSettingsUpdate() {
+        this.broadcastToAll("new-settings"); // Tell all of the Widgets to reload.
         this.setSettingsLayout(SESL.generateLayout(this));
     }
 
