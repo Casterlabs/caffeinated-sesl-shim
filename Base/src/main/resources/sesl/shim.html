@@ -72,7 +72,29 @@
             document.head.appendChild(customJS_el);
           }
 
-          document.body.innerHTML = customHTML;
+          let pageHtml = customHTML;
+
+          // Go through all of the custom fields/settings and replace them.
+          for (const [field, value] of Object.entries(allFields)) {
+            if (
+              typeof value == "string" &&
+              value.startsWith("{") &&
+              value.endsWith("}")
+            ) {
+              // Recurse.
+              pageHtml = pageHtml.replaceAll(
+                new RegExp(`\\{${field}\\}`, "g"),
+                allFields[value.substring(1, value.length - 1)]
+              );
+            } else {
+              pageHtml = pageHtml.replaceAll(
+                new RegExp(`\\{${field}\\}`, "g"),
+                value
+              );
+            }
+          }
+
+          document.body.innerHTML = pageHtml;
 
           switch (shimType) {
             default:
