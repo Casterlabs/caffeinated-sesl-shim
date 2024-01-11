@@ -40,7 +40,7 @@ When in Carrier mode, you package your code and give your client the resulting J
 - For the category, reference [this file](https://github.com/Casterlabs/caffeinated/blob/dev/app/PluginSDK/src/main/java/co/casterlabs/caffeinated/pluginsdk/widgets/WidgetDetails.java#L83).
 
 4. For every widget, you'll need your custom code. Use `my_chatbox` as a reference on how to structure your code.
-5. Delete the existing files in the .jar and replace them with the modified ones you made in steps 3-4.
+5. Delete the existing `sesl/` files in the .jar and replace them with the modified ones you made in steps 3-4.
 6. Rename the final .jar file and distribute it to your users!
 
 ## Development
