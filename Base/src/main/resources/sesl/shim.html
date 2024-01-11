@@ -38,6 +38,60 @@
       Widget.on(
         "custom-data",
         ({ shimType, customCSS, customJS, customHTML }) => {
+          switch (shimType) {
+            default:
+            case "chatbox": {
+              const chatboxScript = document.createElement("script");
+              chatboxScript.src = "/$caffeinated-sdk-root$/chatbox.js";
+              document.head.appendChild(chatboxScript);
+              break;
+            }
+          }
+
+          // Load the HTML
+          {
+            let pageHtml = customHTML;
+
+            // Go through all of the custom fields/settings and replace them.
+            for (const [field, value] of Object.entries(allFields)) {
+              if (
+                typeof value == "string" &&
+                value.startsWith("{") &&
+                value.endsWith("}")
+              ) {
+                // Recurse.
+                pageHtml = pageHtml.replaceAll(
+                  new RegExp(`\\{${field}\\}`, "g"),
+                  allFields[value.substring(1, value.length - 1)]
+                );
+              } else {
+                pageHtml = pageHtml.replaceAll(
+                  new RegExp(`\\{${field}\\}`, "g"),
+                  value
+                );
+              }
+            }
+
+            document.body.innerHTML = pageHtml;
+
+            // Force scripts to evaluate.
+            Array.from(document.body.querySelectorAll("script")) //
+              .forEach((oldScriptEl) => {
+                const newScriptEl = document.createElement("script");
+
+                Array.from(oldScriptEl.attributes).forEach((attr) => {
+                  newScriptEl.setAttribute(attr.name, attr.value);
+                });
+
+                const scriptText = document.createTextNode(
+                  oldScriptEl.innerHTML
+                );
+                newScriptEl.appendChild(scriptText);
+
+                oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+              });
+          }
+
           // Make the custom CSS style.
           {
             // Go through all of the fields and replace them.
@@ -72,39 +126,11 @@
             document.head.appendChild(customJS_el);
           }
 
-          let pageHtml = customHTML;
-
-          // Go through all of the custom fields/settings and replace them.
-          for (const [field, value] of Object.entries(allFields)) {
-            if (
-              typeof value == "string" &&
-              value.startsWith("{") &&
-              value.endsWith("}")
-            ) {
-              // Recurse.
-              pageHtml = pageHtml.replaceAll(
-                new RegExp(`\\{${field}\\}`, "g"),
-                allFields[value.substring(1, value.length - 1)]
-              );
-            } else {
-              pageHtml = pageHtml.replaceAll(
-                new RegExp(`\\{${field}\\}`, "g"),
-                value
-              );
-            }
-          }
-
-          document.body.innerHTML = pageHtml;
-
-          switch (shimType) {
-            default:
-            case "chatbox": {
-              const chatboxScript = document.createElement("script");
-              chatboxScript.src = "/$caffeinated-sdk-root$/chatbox.js";
-              document.head.appendChild(chatboxScript);
-              break;
-            }
-          }
+          setTimeout(
+            () =>
+              Koi.eventHistory.forEach((e) => Koi.broadcast(e.event_type, e)),
+            100
+          ); // Tick.
 
           // Okay, the code is ready. Emit!
           document.dispatchEvent(new CustomEvent("onLoad"));

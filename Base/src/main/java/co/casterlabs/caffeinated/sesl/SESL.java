@@ -171,6 +171,14 @@ public class SESL {
                             .withName(fieldName)
                             .withAllowedTypes("image")
                             .build();
+
+                        String defaultValue = //
+                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
+                                fieldData.containsKey("value") ? fieldData.getString("value") : //
+                                    null;
+                        if (!widget.settings().getJson().containsKey("settings." + fieldId) && defaultValue != null) {
+                            widget.settings().set("settings." + fieldId, defaultValue);
+                        }
                         break;
                     }
 
@@ -180,6 +188,14 @@ public class SESL {
                             .withName(fieldName)
                             .withAllowedTypes("audio")
                             .build();
+
+                        String defaultValue = //
+                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
+                                fieldData.containsKey("value") ? fieldData.getString("value") : //
+                                    null;
+                        if (!widget.settings().getJson().containsKey("settings." + fieldId) && defaultValue != null) {
+                            widget.settings().set("settings." + fieldId, defaultValue);
+                        }
                         break;
                     }
 
