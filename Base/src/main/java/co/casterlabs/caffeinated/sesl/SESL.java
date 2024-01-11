@@ -1,11 +1,25 @@
-/*
- * Copyright 2023 Casterlabs
+/**
+ * MIT LICENSE
+ *
+ * Copyright (c) 2024 Alex Bowles @ Casterlabs
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  * 
- * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package co.casterlabs.caffeinated.sesl;
 
@@ -20,6 +34,13 @@ import org.jetbrains.annotations.Nullable;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsItem;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsLayout;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsSection;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsColorBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsDropdownBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsFileBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsFontBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsNumberBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsRangeBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsTextBuilder;
 import co.casterlabs.caffeinated.util.MimeTypes;
 import co.casterlabs.commons.functional.tuples.Pair;
 import co.casterlabs.rakurai.io.IOUtil;
@@ -40,6 +61,7 @@ public class SESL {
         return seslId == null;
     }
 
+    @SuppressWarnings("deprecation")
     public static WidgetSettingsLayout generateLayout(SESLWidget widget) {
         try {
             WidgetSettingsLayout layout = new WidgetSettingsLayout();
@@ -51,8 +73,23 @@ public class SESL {
                 case "chatbox": {
                     // We intentionally leave out background_color.
                     fieldsSection
-                        .addItem(WidgetSettingsItem.asColor("text_color", "Text Color", "#ffffff"))
-                        .addItem(WidgetSettingsItem.asNumber("font_size", "Font Size (px)", 18, 1, 0, 80));
+                        .addItem(
+                            new WidgetSettingsColorBuilder()
+                                .withId("text_color")
+                                .withName("Text Color")
+                                .withDefaultValue("#ffffff")
+                                .build()
+                        )
+                        .addItem(
+                            new WidgetSettingsNumberBuilder()
+                                .withId("font_size")
+                                .withName("Font Size (px)")
+                                .withStep(1)
+                                .withMin(0)
+                                .withMax(80)
+                                .withDefaultValue(18)
+                                .build()
+                        );
                     // TODO the rest...
                     break;
                 }
@@ -74,7 +111,11 @@ public class SESL {
                             defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
                                 fieldData.containsKey("value") ? fieldData.getString("value") : //
                                     "#ea4c4c";
-                        input = WidgetSettingsItem.asColor(fieldId, fieldName, defaultValue);
+                        input = new WidgetSettingsColorBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withDefaultValue(defaultValue)
+                            .build();
                         break;
                     }
 
@@ -83,7 +124,11 @@ public class SESL {
                             defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
                                 fieldData.containsKey("value") ? fieldData.getString("value") : //
                                     "";
-                        input = WidgetSettingsItem.asText(fieldId, fieldName, defaultValue, "");
+                        input = new WidgetSettingsTextBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withDefaultValue(defaultValue)
+                            .build();
                         break;
                     }
 
@@ -92,11 +137,18 @@ public class SESL {
                             defaultsData.containsKey(fieldId) ? defaultsData.getNumber(fieldId) : //
                                 fieldData.containsKey("value") ? fieldData.getNumber("value") : //
                                     0;
-                        Number steps = fieldData.getNumber("step");
-                        Number min = fieldData.getNumber("min");
-                        Number max = fieldData.getNumber("max");
+                        Number steps = fieldData.containsKey("step") ? fieldData.getNumber("step") : 1;
+                        Number min = fieldData.containsKey("min") ? fieldData.getNumber("min") : Integer.MIN_VALUE;
+                        Number max = fieldData.containsKey("max") ? fieldData.getNumber("max") : Integer.MAX_VALUE;
 
-                        input = WidgetSettingsItem.asRange(fieldId, fieldName, defaultValue, steps, min, max);
+                        input = new WidgetSettingsRangeBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withStep(steps)
+                            .withMin(min)
+                            .withMax(max)
+                            .withDefaultValue(defaultValue)
+                            .build();
                         break;
                     }
 
@@ -105,17 +157,29 @@ public class SESL {
                             defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
                                 fieldData.containsKey("value") ? fieldData.getString("value") : //
                                     "Poppins";
-                        input = WidgetSettingsItem.asFont(fieldId, fieldName, defaultValue);
+                        input = new WidgetSettingsFontBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withDefaultValue(defaultValue)
+                            .build();
                         break;
                     }
 
                     case "image-input": {
-                        input = WidgetSettingsItem.asFile(fieldId, fieldName, "image");
+                        input = new WidgetSettingsFileBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withAllowedTypes("image")
+                            .build();
                         break;
                     }
 
                     case "sound-input": {
-                        input = WidgetSettingsItem.asFile(fieldId, fieldName, "audio");
+                        input = new WidgetSettingsFileBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withAllowedTypes("audio")
+                            .build();
                         break;
                     }
 
@@ -130,13 +194,24 @@ public class SESL {
                             optionsMap.put(opt.getKey(), opt.getValue().getAsString());
                         }
 
-                        input = WidgetSettingsItem.asDropdown(fieldId, fieldName, defaultValue, optionsMap);
+                        input = new WidgetSettingsDropdownBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withDefaultValue(defaultValue)
+                            .withOptions(optionsMap)
+                            .build();
                         break;
                     }
 
                     default: {
                         String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : "";
-                        input = WidgetSettingsItem.asText(fieldId, fieldName, defaultValue, "Unknown type: " + se_fieldType);
+
+                        input = new WidgetSettingsTextBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withDefaultValue(defaultValue)
+                            .withPlaceholder("Unknown type: " + se_fieldType)
+                            .build();
                         break;
                     }
                 }
