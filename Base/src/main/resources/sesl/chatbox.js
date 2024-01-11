@@ -21,7 +21,7 @@ Koi.on("rich_message", (event) => {
   const streamlabsEvent = {
     priority: 10,
     pic: event.sender.image_link,
-    from: event.sender.username,
+    from: event.sender.displayname,
     body: message,
     command: "PRIVMSG",
     tags: {
