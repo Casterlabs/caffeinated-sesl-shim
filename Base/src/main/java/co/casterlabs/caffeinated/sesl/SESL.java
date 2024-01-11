@@ -66,13 +66,14 @@ public class SESL {
         try {
             WidgetSettingsLayout layout = new WidgetSettingsLayout();
 
-            WidgetSettingsSection fieldsSection = new WidgetSettingsSection("settings", "Settings");
+            Map<String, WidgetSettingsSection> sections = new HashMap<>();
+            sections.put("settings", new WidgetSettingsSection("settings", "Settings"));
 
             // Default Streamlabs fields.
             switch (widget.getShimType()) {
                 case "chatbox": {
                     // We intentionally leave out background_color.
-                    fieldsSection
+                    sections.get("settings")
                         .addItem(
                             new WidgetSettingsColorBuilder()
                                 .withId("text_color")
@@ -103,6 +104,8 @@ public class SESL {
 
                 String se_fieldType = fieldData.getString("type");
                 String fieldName = fieldData.getString("label");
+
+                String group = fieldData.containsKey("group") ? fieldData.getString("group") : "settings";
 
                 WidgetSettingsItem input;
                 switch (se_fieldType) {
@@ -176,8 +179,8 @@ public class SESL {
                             defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
                                 fieldData.containsKey("value") ? fieldData.getString("value") : //
                                     null;
-                        if (!widget.settings().getJson().containsKey("settings." + fieldId) && defaultValue != null) {
-                            widget.settings().set("settings." + fieldId, defaultValue);
+                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue != null) {
+                            widget.settings().set(group + "." + fieldId, defaultValue);
                         }
                         break;
                     }
@@ -193,8 +196,8 @@ public class SESL {
                             defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
                                 fieldData.containsKey("value") ? fieldData.getString("value") : //
                                     null;
-                        if (!widget.settings().getJson().containsKey("settings." + fieldId) && defaultValue != null) {
-                            widget.settings().set("settings." + fieldId, defaultValue);
+                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue != null) {
+                            widget.settings().set(group + "." + fieldId, defaultValue);
                         }
                         break;
                     }
@@ -232,9 +235,19 @@ public class SESL {
                     }
                 }
 
-                fieldsSection.addItem(input);
+                WidgetSettingsSection section = sections.get(group);
+
+                if (section == null) {
+                    section = new WidgetSettingsSection(group, group);
+                    sections.put(group, section);
+                }
+
+                section.addItem(input);
             }
-            layout.addSection(fieldsSection);
+
+            for (WidgetSettingsSection section : sections.values()) {
+                layout.addSection(section);
+            }
 
             return layout;
         } catch (Throwable t) {

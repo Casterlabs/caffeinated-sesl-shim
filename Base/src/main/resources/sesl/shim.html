@@ -23,8 +23,8 @@
 
       Widget.on("init", () => {
         for (const [key, value] of Object.entries(Widget.widgetData.settings)) {
-          if (key.startsWith("settings.")) {
-            allFields[key.substring("settings.".length)] = value;
+          if (!key.startsWith("sesl.")) {
+            allFields[key.substring(key.indexOf(".") + 1)] = value;
           }
         }
 
