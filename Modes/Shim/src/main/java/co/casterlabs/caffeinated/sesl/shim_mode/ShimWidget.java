@@ -96,7 +96,7 @@ public class ShimWidget extends SESLWidget {
                                 .withId("custom_js")
                                 .withName("Custom JS")
                                 .withDefaultValue(SESLExamples.customJS)
-                                .withLanguage("js")
+                                .withLanguage("javascript")
                                 .build()
                         )
                         .addItem(
