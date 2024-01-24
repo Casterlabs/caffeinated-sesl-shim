@@ -72,10 +72,14 @@ Koi.on("rich_message", (event) => {
         value.startsWith("{") &&
         value.endsWith("}")
       ) {
-        // Recurse.
+        let correctValue = allFields[value.substring(1, value.length - 1)];
+        if (correctValue === undefined) {
+          correctValue = value; // It's handled down below.
+        }
+
         chatlistItemTemplate = chatlistItemTemplate.replaceAll(
           new RegExp(`\\{${field}\\}`, "g"),
-          allFields[value.substring(1, value.length - 1)]
+          correctValue
         );
       } else {
         chatlistItemTemplate = chatlistItemTemplate.replaceAll(
