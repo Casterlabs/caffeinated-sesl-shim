@@ -59,10 +59,13 @@
                 value.startsWith("{") &&
                 value.endsWith("}")
               ) {
+                const correctValue = allFields[value.substring(1, value.length - 1)];
+                if (correctValue === undefined) continue; // Do not replace.
+                
                 // Recurse.
                 pageHtml = pageHtml.replaceAll(
                   new RegExp(`\\{${field}\\}`, "g"),
-                  allFields[value.substring(1, value.length - 1)]
+                  correctValue
                 );
               } else {
                 pageHtml = pageHtml.replaceAll(
