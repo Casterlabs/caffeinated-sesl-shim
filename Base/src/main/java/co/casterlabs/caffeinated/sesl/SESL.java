@@ -34,16 +34,19 @@ import org.jetbrains.annotations.Nullable;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsItem;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsLayout;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.WidgetSettingsSection;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsCheckboxBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsColorBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsDropdownBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsFileBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsFontBuilder;
+import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsNumberBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsRangeBuilder;
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsTextBuilder;
 import co.casterlabs.caffeinated.util.MimeTypes;
 import co.casterlabs.commons.functional.tuples.Pair;
 import co.casterlabs.rakurai.io.IOUtil;
 import co.casterlabs.rakurai.json.element.JsonElement;
+import co.casterlabs.rakurai.json.element.JsonNull;
 import co.casterlabs.rakurai.json.element.JsonObject;
 import lombok.NonNull;
 import xyz.e3ndr.fastloggingframework.logging.FastLogger;
@@ -67,44 +70,50 @@ public class SESL {
                 String fieldId = entry.getKey();
                 JsonObject fieldData = entry.getValue().getAsObject();
 
-                String se_fieldType = fieldData.getString("type");
-                String fieldName = fieldData.getString("label");
+                String type = fieldData.getString("type").toLowerCase();
+                String fieldName = fieldData.containsKey("label") ? fieldData.getString("label") : "SESL_INVALID_LABEL";
+                JsonElement defaultValue = fieldData.containsKey("value") ? fieldData.get("value") : defaultsData.containsKey(fieldId) ? defaultsData.get(fieldId) : JsonNull.INSTANCE;
 
                 String group = fieldData.containsKey("group") ? fieldData.getString("group") : "settings";
 
                 WidgetSettingsItem input;
-                switch (se_fieldType) {
+                switch (type) {
                     case "colorpicker": {
-                        String defaultValue = //
-                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
-                                fieldData.containsKey("value") ? fieldData.getString("value") : //
-                                    "#ea4c4c";
                         input = new WidgetSettingsColorBuilder()
                             .withId(fieldId)
                             .withName(fieldName)
-                            .withDefaultValue(defaultValue)
+                            .withDefaultValue(defaultValue.isJsonString() ? defaultValue.getAsString() : "#ea4c4c")
                             .build();
                         break;
                     }
 
+                    case "text":
                     case "textfield": {
-                        String defaultValue = //
-                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
-                                fieldData.containsKey("value") ? fieldData.getString("value") : //
-                                    "";
                         input = new WidgetSettingsTextBuilder()
                             .withId(fieldId)
                             .withName(fieldName)
-                            .withDefaultValue(defaultValue)
+                            .withDefaultValue(defaultValue.isJsonString() ? defaultValue.getAsString() : "")
+                            .build();
+                        break;
+                    }
+
+                    case "number": {
+                        Number steps = fieldData.containsKey("step") ? fieldData.getNumber("step") : 1;
+                        Number min = fieldData.containsKey("min") ? fieldData.getNumber("min") : Integer.MIN_VALUE;
+                        Number max = fieldData.containsKey("max") ? fieldData.getNumber("max") : Integer.MAX_VALUE;
+
+                        input = new WidgetSettingsNumberBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withStep(steps)
+                            .withMin(min)
+                            .withMax(max)
+                            .withDefaultValue(defaultValue.isJsonNumber() ? defaultValue.getAsNumber() : 0)
                             .build();
                         break;
                     }
 
                     case "slider": {
-                        Number defaultValue = //
-                            defaultsData.containsKey(fieldId) ? defaultsData.getNumber(fieldId) : //
-                                fieldData.containsKey("value") ? fieldData.getNumber("value") : //
-                                    0;
                         Number steps = fieldData.containsKey("step") ? fieldData.getNumber("step") : 1;
                         Number min = fieldData.containsKey("min") ? fieldData.getNumber("min") : Integer.MIN_VALUE;
                         Number max = fieldData.containsKey("max") ? fieldData.getNumber("max") : Integer.MAX_VALUE;
@@ -115,20 +124,26 @@ public class SESL {
                             .withStep(steps)
                             .withMin(min)
                             .withMax(max)
-                            .withDefaultValue(defaultValue)
+                            .withDefaultValue(defaultValue.isJsonNumber() ? defaultValue.getAsNumber() : 0)
                             .build();
                         break;
                     }
 
+                    case "checkbox": {
+                        input = new WidgetSettingsCheckboxBuilder()
+                            .withId(fieldId)
+                            .withName(fieldName)
+                            .withDefaultValue(defaultValue.isJsonBoolean() ? defaultValue.getAsBoolean() : false)
+                            .build();
+                        break;
+                    }
+
+                    case "googlefont":
                     case "fontpicker": {
-                        String defaultValue = //
-                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
-                                fieldData.containsKey("value") ? fieldData.getString("value") : //
-                                    "Poppins";
                         input = new WidgetSettingsFontBuilder()
                             .withId(fieldId)
                             .withName(fieldName)
-                            .withDefaultValue(defaultValue)
+                            .withDefaultValue(defaultValue.isJsonString() ? defaultValue.getAsString() : "Poppins")
                             .build();
                         break;
                     }
@@ -140,12 +155,8 @@ public class SESL {
                             .withAllowedTypes("image")
                             .build();
 
-                        String defaultValue = //
-                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
-                                fieldData.containsKey("value") ? fieldData.getString("value") : //
-                                    null;
-                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue != null) {
-                            widget.settings().set(group + "." + fieldId, defaultValue);
+                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue.isJsonString()) {
+                            widget.settings().set(group + "." + fieldId, defaultValue.getAsString());
                         }
                         break;
                     }
@@ -157,29 +168,23 @@ public class SESL {
                             .withAllowedTypes("audio")
                             .build();
 
-                        String defaultValue = //
-                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
-                                fieldData.containsKey("value") ? fieldData.getString("value") : //
-                                    null;
-                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue != null) {
-                            widget.settings().set(group + "." + fieldId, defaultValue);
+                        if (!widget.settings().getJson().containsKey(group + "." + fieldId) && defaultValue.isJsonString()) {
+                            widget.settings().set(group + "." + fieldId, defaultValue.getAsString());
                         }
                         break;
                     }
 
                     case "dropdown": {
-                        String defaultValue = //
-                            defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : //
-                                fieldData.containsKey("value") ? fieldData.getString("value") : //
-                                    "";
+                        String dv = //
+                            defaultValue.isJsonString() ? defaultValue.getAsString() : "";
 
                         Map<String, String> optionsMap = new HashMap<>();
                         for (Map.Entry<String, JsonElement> opt : fieldData.getObject("options")) {
                             String key = opt.getKey();
                             String value = opt.getValue().getAsString();
 
-                            if (defaultValue.equals(value)) {
-                                defaultValue = key; // Strange...
+                            if (dv.equals(value)) {
+                                dv = key; // Strange...
                             }
 
                             optionsMap.put(key, value);
@@ -188,20 +193,22 @@ public class SESL {
                         input = new WidgetSettingsDropdownBuilder()
                             .withId(fieldId)
                             .withName(fieldName)
-                            .withDefaultValue(defaultValue)
+                            .withDefaultValue(dv)
                             .withOptions(optionsMap)
                             .build();
                         break;
                     }
 
-                    default: {
-                        String defaultValue = fieldData.containsKey("value") ? fieldData.getString("value") : defaultsData.containsKey(fieldId) ? defaultsData.getString(fieldId) : "";
+                    case "hidden":
+                        continue;
 
+                    default: {
+                        LOGGER.warn("Unrecognized type: %s", fieldData);
                         input = new WidgetSettingsTextBuilder()
                             .withId(fieldId)
-                            .withName(fieldName)
-                            .withDefaultValue(defaultValue)
-                            .withPlaceholder("Unknown type: " + se_fieldType)
+                            .withName("Unsupported: " + fieldName)
+                            .withDefaultValue(defaultValue.isJsonNull() ? "" : defaultValue.toString())
+                            .withPlaceholder("Unknown type: " + type)
                             .build();
                         break;
                     }

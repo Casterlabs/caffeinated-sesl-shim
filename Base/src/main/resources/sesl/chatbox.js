@@ -1,5 +1,5 @@
 // Chat events. (PRIVMSG)
-Koi.on("rich_message", (event) => {
+Koi.on("RICH_MESSAGE", (event) => {
   let message = "";
 
   for (const fragment of event.fragments) {
@@ -51,7 +51,7 @@ Koi.on("rich_message", (event) => {
     userType: "",
     platform: `${event.sender.platform.toLowerCase()}_account`,
     platformAccountId: null,
-    messageId: event.id,
+    messageId: event.id.replaceAll(/=/g, ''),
     access_token: null,
     to: `#${event.streamer.username}`,
   };
@@ -112,7 +112,6 @@ Koi.on("rich_message", (event) => {
 
     chatlistItemTemplate_el.innerHTML = chatlistItemTemplate;
 
-
     // Inject the badges.
     const badgesList = chatlistItemTemplate_el.querySelector(".badges");
     if (badgesList) {
@@ -125,12 +124,81 @@ Koi.on("rich_message", (event) => {
     chatlistItemTemplate_el.outerHTML = chatlistItemTemplate_el.innerHTML;
   })();
 
-  // Shim out the event for any JS listeners.
+  console.debug("Sending SL event:", streamlabsEvent);
   document.dispatchEvent(
     new CustomEvent("onEventReceived", { detail: streamlabsEvent })
   );
   window.dispatchEvent(
     new CustomEvent("onEventReceived", { detail: streamlabsEvent })
   );
+});
 
+Koi.on("RICH_MESSAGE", (event) => {
+  const streamelementsEvent = {
+    listener: "message",
+    event: {
+      data: {
+        time: event.timestamp,
+        tags: {
+          "badge-info": "",
+          badges: "",
+          //   "client-nonce": "208e0792c078f507d8b9c55586846a78",
+          color: event.sender.color,
+          "display-name": event.sender.displayname,
+          emotes: "",
+          "first-msg": "0",
+          flags: "",
+          id: event.id,
+          mod: "0",
+          "returning-chatter": "0",
+          "room-id": event.streamer.channel_id,
+          subscriber: "0",
+          "tmi-sent-ts": Date.now().toString(),
+          turbo: "0",
+          "user-id": event.sender.id,
+          "user-type": "",
+        },
+        nick: event.sender.username,
+        userId: event.sender.id,
+        displayName: event.sender.displayname,
+        displayColor: event.sender.id,
+        badges: [
+          // {
+          //   type: "broadcaster",
+          //   version: "1",
+          //   url: "https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/3",
+          //   description: "Broadcaster",
+          // },
+        ],
+        channel: event.streamer.username,
+        text: event.raw,
+        isAction: false,
+        emotes: [
+          // {
+          //   type: "twitch",
+          //   name: "Kappa",
+          //   id: "25",
+          //   gif: false,
+          //   urls: {
+          //     1: "https://static-cdn.jtvnw.net/emoticons/v1/25/1.0",
+          //     2: "https://static-cdn.jtvnw.net/emoticons/v1/25/2.0",
+          //     4: "https://static-cdn.jtvnw.net/emoticons/v1/25/4.0",
+          //   },
+          //   start: 5,
+          //   end: 9,
+          // },
+        ],
+        msgId: event.id.replaceAll(/=/g, ''),
+        raw: event, // Ick.
+      },
+    },
+  };
+
+  console.debug("Sending SE event:", streamelementsEvent);
+  document.dispatchEvent(
+    new CustomEvent("onEventReceived", { detail: streamelementsEvent })
+  );
+  window.dispatchEvent(
+    new CustomEvent("onEventReceived", { detail: streamelementsEvent })
+  );
 });

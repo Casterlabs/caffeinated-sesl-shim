@@ -59,9 +59,10 @@
                 value.startsWith("{") &&
                 value.endsWith("}")
               ) {
-                const correctValue = allFields[value.substring(1, value.length - 1)];
+                const correctValue =
+                  allFields[value.substring(1, value.length - 1)];
                 if (correctValue === undefined) continue; // Do not replace.
-                
+
                 // Recurse.
                 pageHtml = pageHtml.replaceAll(
                   new RegExp(`\\{${field}\\}`, "g"),
@@ -159,6 +160,22 @@
           // Okay, the code is ready. Emit!
           document.dispatchEvent(new CustomEvent("onLoad"));
           window.dispatchEvent(new CustomEvent("onLoad"));
+          window.dispatchEvent(
+            new CustomEvent("onWidgetLoad", {
+              detail: {
+                fieldData: allFields,
+                channel: {
+                  username: "CasterlabsFan12",
+                  apiToken: "invalid",
+                },
+                currency: {
+                  code: "USD",
+                  name: "U.S. Dollar",
+                  symbol: "$",
+                },
+              },
+            })
+          );
         }
       );
     </script>
