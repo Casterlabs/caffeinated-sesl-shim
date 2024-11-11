@@ -44,7 +44,7 @@ import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettings
 import co.casterlabs.caffeinated.pluginsdk.widgets.settings.items.WidgetSettingsTextBuilder;
 import co.casterlabs.caffeinated.util.MimeTypes;
 import co.casterlabs.commons.functional.tuples.Pair;
-import co.casterlabs.rakurai.io.IOUtil;
+import co.casterlabs.commons.io.streams.StreamUtil;
 import co.casterlabs.rakurai.json.element.JsonElement;
 import co.casterlabs.rakurai.json.element.JsonNull;
 import co.casterlabs.rakurai.json.element.JsonObject;
@@ -249,7 +249,7 @@ public class SESL {
 
         try (InputStream in = SESL.class.getClassLoader().getResourceAsStream(resource)) {
             return new Pair<>(
-                IOUtil.readInputStreamString(in, StandardCharsets.UTF_8),
+                StreamUtil.toString(in, StandardCharsets.UTF_8),
                 mimeType
             );
         } catch (Exception e) {

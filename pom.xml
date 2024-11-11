@@ -88,8 +88,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>co.casterlabs</groupId>
-			<artifactId>PluginSDK</artifactId>
+			<groupId>co.casterlabs.caffeinated</groupId>
+			<artifactId>plugin_sdk</artifactId>
 			<version>1.2</version>
 			<scope>provided</scope>
 		</dependency>
